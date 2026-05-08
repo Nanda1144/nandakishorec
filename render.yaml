@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: fullstack-portfolio-backend
+    env: node
+    region: oregon          # Change to: singapore, frankfurt, ohio, virginia
+    plan: free              # Change to: starter, standard, pro for production
+
+    buildCommand: npm install
+    startCommand: node src/server.js
+
+    healthCheckPath: /api/v1/health
+
+    autoDeploy: true        # Auto-deploy on every push to the linked branch
+
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: PORT
+        value: 10000         # Render always exposes port 10000 internally
+
+      - key: MONGO_URI
+        sync: false          # Set this secret manually in the Render dashboard
+
+      - key: ALLOWED_ORIGINS
+        sync: false          # e.g. https://your-frontend.vercel.app
+
+      - key: RATE_LIMIT_WINDOW_MS
+        value: 900000
+
+      - key: RATE_LIMIT_MAX
+        value: 100
+
+      - key: JWT_SECRET
+        sync: false          # Set this secret manually in the Render dashboard
+
+      - key: JWT_EXPIRES_IN
+        value: 7d
+
+      - key: LOG_LEVEL
+        value: info
+
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+
+      - key: CLOUDINARY_API_KEY
+        sync: false
+
+      - key: CLOUDINARY_API_SECRET
+        sync: false
