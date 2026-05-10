@@ -1,6 +1,7 @@
 'use strict';
 
 const frontendService = require('../services/frontend.service');
+const scraperService = require('../utils/scraper.service');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const { HTTP_STATUS, MESSAGES } = require('../constants');
@@ -21,8 +22,19 @@ const getFrontendById = asyncHandler(async (req, res) => {
 });
 
 const createFrontend = asyncHandler(async (req, res) => {
-  const frontend = await frontendService.createFrontend(req.body);
-  return new ApiResponse(HTTP_STATUS.CREATED, frontend, MESSAGES.CREATED).send(res);
+  const { autoImport, ...frontendData } = req.body;
+  const frontend = await frontendService.createFrontend(frontendData);
+  
+  let importResults = null;
+  if (autoImport && frontend.url) {
+    try {
+      importResults = await scraperService.importFromUrl(frontend.url, frontend.slug);
+    } catch (err) {
+      console.error('Import during creation failed:', err);
+    }
+  }
+
+  return new ApiResponse(HTTP_STATUS.CREATED, { frontend, importResults }, MESSAGES.CREATED).send(res);
 });
 
 const updateFrontend = asyncHandler(async (req, res) => {
