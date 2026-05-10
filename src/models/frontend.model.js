@@ -38,6 +38,12 @@ const frontendSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
     isActive: {
       type: Boolean,
       default: true,
@@ -49,7 +55,20 @@ const frontendSchema = new mongoose.Schema(
   },
 );
 
+// ── Pre-save Hook to generate slug ──────────────────────────────────────────
+frontendSchema.pre('save', function (next) {
+  if (this.isModified('name')) {
+    this.slug = this.name
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '') // Remove special characters
+      .replace(/[\s_]+/g, '-')   // Replace spaces/underscores with hyphens
+      .replace(/^-+|-+$/g, '');  // Trim hyphens
+  }
+  next();
+});
+
 // ── Indexes ──────────────────────────────────────────────────────────────────
+frontendSchema.index({ slug: 1 }, { unique: true });
 frontendSchema.index({ isActive: 1 });
 
 const Frontend = mongoose.model('Frontend', frontendSchema);
