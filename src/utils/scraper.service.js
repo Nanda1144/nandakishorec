@@ -7,7 +7,9 @@ const Achievement = require('../models/achievement.model');
 const Skill = require('../models/skill.model');
 const Gallery = require('../models/gallery.model');
 const Hero = require('../models/hero.model');
-const Layout = require('../models/layout.model');
+const Header = require('../models/header.model');
+const Footer = require('../models/footer.model');
+
 
 /**
  * Advanced AI-Powered Scraper Engine
@@ -122,12 +124,11 @@ class ScraperEngine {
         href: l.match(/href="(.*?)"/i)?.[1]
       })).filter(l => l.label && l.href);
 
-      await Layout.findOneAndUpdate(
-        { frontendSlug: slug, type: 'header' },
+      await Header.findOneAndUpdate(
+        { frontendSlug: slug },
         { 
-          config: { navLinks: links },
-          frontendSlug: slug,
-          type: 'header'
+          navLinks: links,
+          frontendSlug: slug
         },
         { upsert: true }
       );
