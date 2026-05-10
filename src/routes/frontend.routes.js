@@ -21,6 +21,7 @@ router.route('/')
   );
 
 router.post('/import-ai', frontendController.importAI);
+router.patch('/publish/:slug', frontendController.publish);
 
 router.route('/:id')
   .get(

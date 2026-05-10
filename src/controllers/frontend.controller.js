@@ -67,11 +67,31 @@ const toggleStatus = asyncHandler(async (req, res) => {
   return new ApiResponse(HTTP_STATUS.OK, frontend, message).send(res);
 });
 
+const publish = asyncHandler(async (req, res) => {
+  const { slug } = req.params;
+  const { config } = req.body;
+  
+  const frontend = await require('../models/frontend.model').findOneAndUpdate(
+    { slug },
+    { 
+      publishedConfig: config,
+      $push: { revisions: { config, updatedAt: new Date() } }
+    },
+    { new: true }
+  );
+  
+  if (!frontend) throw new ApiError(HTTP_STATUS.NOT_FOUND, 'Frontend not found');
+  
+  return new ApiResponse(HTTP_STATUS.OK, frontend, 'Website published live successfully!').send(res);
+});
+
 module.exports = {
   getAllFrontends,
   getFrontendById,
   createFrontend,
+  importAI,
   updateFrontend,
   deleteFrontend,
   toggleStatus,
+  publish,
 };
