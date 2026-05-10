@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const gdrive = require('../utils/externalFiles');
 
 /**
  * Patent model to store intellectual property details.
@@ -31,8 +32,9 @@ const patentSchema = new mongoose.Schema(
       },
     ],
     certificate: {
-      type: String, // URL/Path to certificate
-      trim: true,
+      url: { type: String, trim: true },
+      previewUrl: { type: String, trim: true },
+      downloadUrl: { type: String, trim: true },
     },
     frontends: {
       type: [String],
@@ -44,6 +46,15 @@ const patentSchema = new mongoose.Schema(
     versionKey: false,
   },
 );
+
+// ── Pre-save hook ─────────────────────────────────────────────────────────────
+patentSchema.pre('save', function (next) {
+  if (this.certificate && this.certificate.url && gdrive.isExternalLink(this.certificate.url)) {
+    this.certificate.previewUrl = gdrive.getPreviewLink(this.certificate.url);
+    this.certificate.downloadUrl = gdrive.getDownloadLink(this.certificate.url);
+  }
+  next();
+});
 
 // ── Indexes ──────────────────────────────────────────────────────────────────
 patentSchema.index({ patentTitle: 'text', description: 'text' });

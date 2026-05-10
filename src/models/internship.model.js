@@ -1,6 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const gdrive = require('../utils/googleDrive');
 
 /**
  * Internship / Work Experience model.
@@ -28,12 +29,14 @@ const internshipSchema = new mongoose.Schema(
       type: Date,
     },
     offerLetter: {
-      type: String, // URL/Path to file
-      trim: true,
+      url: { type: String, trim: true },
+      previewUrl: { type: String, trim: true },
+      downloadUrl: { type: String, trim: true },
     },
     completionCertificate: {
-      type: String, // URL/Path to file
-      trim: true,
+      url: { type: String, trim: true },
+      previewUrl: { type: String, trim: true },
+      downloadUrl: { type: String, trim: true },
     },
     photos: [
       {
@@ -72,6 +75,20 @@ const internshipSchema = new mongoose.Schema(
     versionKey: false,
   },
 );
+
+// ── Pre-save hook ─────────────────────────────────────────────────────────────
+internshipSchema.pre('save', function (next) {
+  const processExternal = (field) => {
+    if (this[field] && this[field].url && gdrive.isExternalLink(this[field].url)) {
+      this[field].previewUrl = gdrive.getPreviewLink(this[field].url);
+      this[field].downloadUrl = gdrive.getDownloadLink(this[field].url);
+    }
+  };
+
+  processExternal('offerLetter');
+  processExternal('completionCertificate');
+  next();
+});
 
 // ── Indexes ──────────────────────────────────────────────────────────────────
 internshipSchema.index({ companyName: 'text', description: 'text' });
