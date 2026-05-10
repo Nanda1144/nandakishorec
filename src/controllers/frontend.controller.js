@@ -28,13 +28,22 @@ const createFrontend = asyncHandler(async (req, res) => {
   let importResults = null;
   if (autoImport && frontend.url) {
     try {
-      importResults = await scraperService.importFromUrl(frontend.url, frontend.slug);
+      importResults = await scraperService.analyzeAndImport(frontend.url, frontend.slug);
     } catch (err) {
       console.error('Import during creation failed:', err);
     }
   }
 
   return new ApiResponse(HTTP_STATUS.CREATED, { frontend, importResults }, MESSAGES.CREATED).send(res);
+});
+
+const importAI = asyncHandler(async (req, res) => {
+  const { url, slug } = req.body;
+  if (!url || !slug) {
+    throw new ApiError(HTTP_STATUS.BAD_REQUEST, 'URL and Slug are required for AI import');
+  }
+  const results = await scraperService.analyzeAndImport(url, slug);
+  return new ApiResponse(HTTP_STATUS.OK, results, 'AI Analysis and Import completed!').send(res);
 });
 
 const updateFrontend = asyncHandler(async (req, res) => {

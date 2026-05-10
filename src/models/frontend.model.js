@@ -34,6 +34,20 @@ const frontendSchema = new mongoose.Schema(
       enum: ['Active', 'Maintenance', 'Draft'],
       default: 'Active',
     },
+    draftConfig: {
+      type: Object,
+      default: {},
+    },
+    publishedConfig: {
+      type: Object,
+      default: {},
+    },
+    revisions: [
+      {
+        config: Object,
+        updatedAt: { type: Date, default: Date.now },
+      },
+    ],
     logo: {
       type: String,
       trim: true,

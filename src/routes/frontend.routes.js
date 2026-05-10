@@ -20,6 +20,8 @@ router.route('/')
     frontendController.createFrontend
   );
 
+router.post('/import-ai', frontendController.importAI);
+
 router.route('/:id')
   .get(
     frontendValidators.mongoId,
