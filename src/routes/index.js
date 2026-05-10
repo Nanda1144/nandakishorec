@@ -23,7 +23,7 @@ router.use('/achievements', require('./achievement.routes'));
 router.use('/gallery', require('./gallery.routes'));
 router.use('/research', require('./research.routes'));
 router.use('/patents', require('./patent.routes'));
-router.use('/themes', require('./theme.routes'));
+router.use('/theme', require('./theme.routes'));
 router.use('/layout', require('./layout.routes'));
 router.use('/hero', require('./hero.routes'));
 router.use('/analytics', require('./analytics.routes'));

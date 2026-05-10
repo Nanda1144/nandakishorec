@@ -20,6 +20,9 @@ const validate = (req, res, next) => {
       field: err.path,
       message: err.msg,
     }));
+    
+    console.error('❌ Validation Failed:', JSON.stringify(extractedErrors, null, 2));
+    
     return next(
       new ApiError(HTTP_STATUS.UNPROCESSABLE_ENTITY, MESSAGES.VALIDATION_ERROR, extractedErrors),
     );
