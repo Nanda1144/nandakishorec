@@ -78,15 +78,15 @@ const internshipSchema = new mongoose.Schema(
 
 // ── Pre-save hook ─────────────────────────────────────────────────────────────
 internshipSchema.pre('save', function (next) {
-  const processExternal = (field) => {
-    if (this[field] && this[field].url && gdrive.isExternalLink(this[field].url)) {
+  const processGDrive = (field) => {
+    if (this[field] && this[field].url && gdrive.isGoogleDriveLink(this[field].url)) {
       this[field].previewUrl = gdrive.getPreviewLink(this[field].url);
       this[field].downloadUrl = gdrive.getDownloadLink(this[field].url);
     }
   };
 
-  processExternal('offerLetter');
-  processExternal('completionCertificate');
+  processGDrive('offerLetter');
+  processGDrive('completionCertificate');
   next();
 });
 

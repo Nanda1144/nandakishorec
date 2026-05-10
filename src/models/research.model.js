@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const gdrive = require('../utils/externalFiles');
+const gdrive = require('../utils/googleDrive');
 
 /**
  * Research model to store academic publications and papers.
@@ -65,7 +65,7 @@ const researchSchema = new mongoose.Schema(
 
 // ── Pre-save hook ─────────────────────────────────────────────────────────────
 researchSchema.pre('save', function (next) {
-  if (this.certificate && this.certificate.url && gdrive.isExternalLink(this.certificate.url)) {
+  if (this.certificate && this.certificate.url && gdrive.isGoogleDriveLink(this.certificate.url)) {
     this.certificate.previewUrl = gdrive.getPreviewLink(this.certificate.url);
     this.certificate.downloadUrl = gdrive.getDownloadLink(this.certificate.url);
   }

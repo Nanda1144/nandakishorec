@@ -1,75 +1,46 @@
 'use strict';
 
 /**
- * External Files Utility
- * Handles parsing and transformation of Google Drive and OneDrive share links.
+ * Google Drive Utility
+ * Handles parsing, transformation, and validation of Google Drive share links.
  */
 
-const extractGDriveId = (url) => {
+const extractFileId = (url) => {
   if (!url) return null;
+  
+  // Regex for various Google Drive link formats
   const patterns = [
-    /\/file\/d\/([a-zA-Z0-9_-]+)/,
-    /id=([a-zA-Z0-9_-]+)/,
-    /\/open\?id=([a-zA-Z0-9_-]+)/,
+    /\/file\/d\/([a-zA-Z0-9_-]+)/,       // https://drive.google.com/file/d/ID/view
+    /id=([a-zA-Z0-9_-]+)/,               // https://drive.google.com/uc?id=ID
+    /\/open\?id=([a-zA-Z0-9_-]+)/,       // https://drive.google.com/open?id=ID
+    /\/folders\/([a-zA-Z0-9_-]+)/,       // https://drive.google.com/drive/folders/ID
   ];
+
   for (const pattern of patterns) {
     const match = url.match(pattern);
     if (match && match[1]) return match[1];
   }
-  return null;
-};
 
-const extractOneDriveInfo = (url) => {
-  if (!url) return null;
-  // OneDrive Personal usually has a resid and authkey
-  const residMatch = url.match(/resid=([a-zA-Z0-9!]+)/);
-  const authkeyMatch = url.match(/authkey=([a-zA-Z0-9!_-]+)/);
-  
-  if (residMatch && authkeyMatch) {
-    return { resid: residMatch[1], authkey: authkeyMatch[1] };
-  }
   return null;
 };
 
 const getPreviewLink = (url) => {
-  if (!url) return '';
-  
-  // Google Drive
-  const gdriveId = extractGDriveId(url);
-  if (gdriveId) return `https://drive.google.com/file/d/${gdriveId}/preview`;
-  
-  // OneDrive
-  const odInfo = extractOneDriveInfo(url);
-  if (odInfo) {
-    return `https://onedrive.live.com/embed?resid=${odInfo.resid}&authkey=${odInfo.authkey}&em=2`;
-  }
-
-  return url; // Fallback
+  const id = extractFileId(url);
+  return id ? `https://drive.google.com/file/d/${id}/preview` : url;
 };
 
 const getDownloadLink = (url) => {
-  if (!url) return '';
-  
-  // Google Drive
-  const gdriveId = extractGDriveId(url);
-  if (gdriveId) return `https://drive.google.com/uc?export=download&id=${gdriveId}`;
-  
-  // OneDrive
-  // Direct download for OneDrive is usually achieved by changing 'redir' to 'download' or using a different API
-  // but for personal links, it's complex. We'll fallback to original for now or use the download parameter if possible.
-  if (url.includes('onedrive.live.com')) {
-    return url.replace('redir?', 'download?').replace('embed?', 'download?');
-  }
-
-  return url;
+  const id = extractFileId(url);
+  return id ? `https://drive.google.com/uc?export=download&id=${id}` : url;
 };
 
-const isExternalLink = (url) => {
-  return /drive\.google\.com/.test(url) || /onedrive\.live\.com/.test(url) || /1drv\.ms/.test(url);
+const isGoogleDriveLink = (url) => {
+  return /drive\.google\.com/.test(url) || /docs\.google\.com/.test(url);
 };
 
 module.exports = {
+  extractFileId,
   getPreviewLink,
   getDownloadLink,
-  isExternalLink,
+  isGoogleDriveLink,
 };

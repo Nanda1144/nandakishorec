@@ -1,7 +1,7 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const gdrive = require('../utils/externalFiles');
+const gdrive = require('../utils/googleDrive');
 
 /**
  * Achievement model to store awards and milestones.
@@ -51,7 +51,7 @@ const achievementSchema = new mongoose.Schema(
 
 // ── Pre-save hook ─────────────────────────────────────────────────────────────
 achievementSchema.pre('save', function (next) {
-  if (this.certificate && this.certificate.url && gdrive.isExternalLink(this.certificate.url)) {
+  if (this.certificate && this.certificate.url && gdrive.isGoogleDriveLink(this.certificate.url)) {
     this.certificate.previewUrl = gdrive.getPreviewLink(this.certificate.url);
     this.certificate.downloadUrl = gdrive.getDownloadLink(this.certificate.url);
   }
