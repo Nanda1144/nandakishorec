@@ -32,10 +32,6 @@ class FrontendService {
    * Create a new frontend.
    */
   async createFrontend(payload) {
-    const existing = await Frontend.findOne({ slug: payload.slug });
-    if (existing) {
-      throw new ApiError(HTTP_STATUS.CONFLICT, 'A frontend with this slug already exists.');
-    }
     return await Frontend.create(payload);
   }
 

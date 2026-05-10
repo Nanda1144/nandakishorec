@@ -12,24 +12,26 @@ const frontendValidators = {
       .notEmpty().withMessage('Name is required')
       .isLength({ max: 100 }).withMessage('Name must not exceed 100 characters'),
 
-    body('slug')
+    body('url')
       .trim()
-      .notEmpty().withMessage('Slug is required')
-      .matches(/^[a-z0-9-]+$/).withMessage('Slug can only contain lowercase letters, numbers, and hyphens'),
+      .notEmpty().withMessage('Frontend URL is required')
+      .isURL().withMessage('Please provide a valid URL'),
 
-    body('domainUrl')
-      .trim()
-      .notEmpty().withMessage('Domain URL is required')
-      .isURL().withMessage('Please provide a valid domain URL'),
+    body('frontendType')
+      .optional()
+      .isIn(['Personal', 'Business', 'Portfolio', 'Other']).withMessage('Invalid frontend type'),
+
+    body('theme')
+      .optional()
+      .trim(),
+
+    body('status')
+      .optional()
+      .isIn(['Active', 'Maintenance', 'Draft']).withMessage('Invalid status'),
 
     body('logo')
       .optional()
-      .trim()
-      .isURL().withMessage('Logo must be a valid URL'),
-
-    body('themeSettings')
-      .optional()
-      .isObject().withMessage('themeSettings must be an object'),
+      .trim(),
 
     body('isActive')
       .optional()
@@ -44,24 +46,26 @@ const frontendValidators = {
       .trim()
       .isLength({ max: 100 }).withMessage('Name must not exceed 100 characters'),
 
-    body('slug')
+    body('url')
       .optional()
       .trim()
-      .matches(/^[a-z0-9-]+$/).withMessage('Slug can only contain lowercase letters, numbers, and hyphens'),
+      .isURL().withMessage('Please provide a valid URL'),
 
-    body('domainUrl')
+    body('frontendType')
       .optional()
-      .trim()
-      .isURL().withMessage('Please provide a valid domain URL'),
+      .isIn(['Personal', 'Business', 'Portfolio', 'Other']).withMessage('Invalid frontend type'),
+
+    body('theme')
+      .optional()
+      .trim(),
+
+    body('status')
+      .optional()
+      .isIn(['Active', 'Maintenance', 'Draft']).withMessage('Invalid status'),
 
     body('logo')
       .optional()
-      .trim()
-      .isURL().withMessage('Logo must be a valid URL'),
-
-    body('themeSettings')
-      .optional()
-      .isObject().withMessage('themeSettings must be an object'),
+      .trim(),
 
     body('isActive')
       .optional()
