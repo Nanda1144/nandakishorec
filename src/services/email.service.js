@@ -59,7 +59,7 @@ const sendSecurityAlert = async ({ email, failedCount, ip, browser, device, time
         <p style="margin: 5px 0;"><strong>Timestamp:</strong> ${timestamp}</p>
       </div>
 
-      ${capturedImage ? `<div style="margin-top: 20px;"><p style="font-weight: bold;">Captured Attempt Image:</p><img src="${capturedImage}" alt="Attempt" style="max-width: 100%; border-radius: 8px; border: 1px solid #ddd;" /></div>` : ''}
+
 
       <hr style="border: 0; border-top: 1px solid #e5e7eb; margin: 30px 0;" />
       <p style="font-size: 14px; color: #6b7280; line-height: 1.5;">
