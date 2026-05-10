@@ -46,6 +46,24 @@ const themeSchema = new mongoose.Schema(
         value: String, // CSS gradient string
       },
     ],
+    buttons: {
+      borderRadius: { type: String, default: '8px' },
+      paddingX: { type: String, default: '20px' },
+      paddingY: { type: String, default: '10px' },
+      borderWidth: { type: String, default: '1px' },
+      shadow: { type: String, default: 'none' },
+    },
+    cards: {
+      borderRadius: { type: String, default: '16px' },
+      padding: { type: String, default: '24px' },
+      borderWidth: { type: String, default: '1px' },
+      shadow: { type: String, default: '0 4px 6px -1px rgb(0 0 0 / 0.1)' },
+    },
+    hero: {
+      alignment: { type: String, enum: ['left', 'center', 'right'], default: 'center' },
+      minHeight: { type: String, default: '600px' },
+      overlayOpacity: { type: Number, default: 0.5 },
+    },
     mode: {
       type: String,
       enum: ['light', 'dark', 'system'],

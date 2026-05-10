@@ -38,6 +38,12 @@ const footerSchema = new mongoose.Schema(
       type: String,
       default: 'All rights reserved.',
     },
+    referenceLinks: [
+      {
+        label: { type: String },
+        url: { type: String }
+      }
+    ]
   },
   {
     timestamps: true,

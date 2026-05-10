@@ -64,12 +64,16 @@ const projectSchema = new mongoose.Schema(
     },
     projectStatus: {
       type: String,
-      enum: Object.values(PROJECT_STATUS),
-      default: PROJECT_STATUS.COMPLETED,
+      enum: ['Draft', 'Published'],
+      default: 'Draft',
+    },
+    isVisible: {
+      type: Boolean,
+      default: true,
     },
     frontends: {
       type: [String],
-      required: [true, 'At least one frontend is required'],
+      required: [true, 'Frontend selection is required'],
       validate: {
         validator: function (v) {
           return Array.isArray(v) && v.length > 0;

@@ -48,6 +48,20 @@ const heroSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    announcements: [
+      {
+        text: { type: String },
+        link: { type: String },
+        isActive: { type: Boolean, default: true }
+      }
+    ],
+    updates: [
+      {
+        title: { type: String },
+        description: { type: String },
+        date: { type: Date, default: Date.now }
+      }
+    ]
   },
   {
     timestamps: true,

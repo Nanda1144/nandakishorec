@@ -13,31 +13,30 @@ const frontendSchema = new mongoose.Schema(
       trim: true,
       maxlength: [100, 'Name must not exceed 100 characters'],
     },
-    slug: {
+    url: {
       type: String,
-      required: [true, 'Slug is required'],
-      unique: true,
-      lowercase: true,
+      required: [true, 'Frontend URL is required'],
       trim: true,
-      match: [/^[a-z0-9-]+$/, 'Slug can only contain lowercase letters, numbers, and hyphens'],
     },
-    domainUrl: {
+    frontendType: {
       type: String,
-      required: [true, 'Domain URL is required'],
-      trim: true,
-      // Simple URL validation regex
-      match: [
-        /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
-        'Please provide a valid domain URL',
-      ],
+      required: [true, 'Frontend type is required'],
+      enum: ['Personal', 'Business', 'Portfolio', 'Other'],
+      default: 'Portfolio',
+    },
+    theme: {
+      type: String,
+      required: [true, 'Theme is required'],
+      default: 'Modern Dark',
+    },
+    status: {
+      type: String,
+      enum: ['Active', 'Maintenance', 'Draft'],
+      default: 'Active',
     },
     logo: {
       type: String,
       trim: true,
-    },
-    themeSettings: {
-      type: mongoose.Schema.Types.Mixed,
-      default: {},
     },
     isActive: {
       type: Boolean,

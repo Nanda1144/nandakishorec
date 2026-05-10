@@ -4,6 +4,8 @@ const authService = require('../services/auth.service');
 const asyncHandler = require('../utils/asyncHandler');
 const ApiResponse = require('../utils/ApiResponse');
 const { HTTP_STATUS } = require('../constants');
+const { logAudit } = require('../middleware/security.middleware');
+const emailService = require('../services/email.service');
 
 // ── Cookie config ─────────────────────────────────────────────────────────────
 const REFRESH_COOKIE = 'refreshToken';
@@ -32,13 +34,44 @@ const clearCookieOptions = {
  * Returns: { accessToken, admin }  +  httpOnly refreshToken cookie
  */
 const login = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, capturedImage } = req.body;
 
-  const { accessToken, refreshToken, admin } = await authService.login(email, password);
+  try {
+    const { accessToken, refreshToken, admin } = await authService.login(email, password);
 
-  res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
+    res.cookie(REFRESH_COOKIE, refreshToken, cookieOptions);
 
-  return new ApiResponse(HTTP_STATUS.OK, { accessToken, admin }, 'Login successful').send(res);
+    await logAudit({
+      adminId: admin.id,
+      action: 'LOGIN_SUCCESS',
+      entity: 'Admin',
+      req,
+    });
+
+    return new ApiResponse(HTTP_STATUS.OK, { accessToken, admin }, 'Login successful').send(res);
+  } catch (error) {
+    // Send email alert on failure
+    await emailService.sendSecurityAlert({
+      email,
+      failedCount: error.message.includes('attempts remaining') 
+        ? 5 - parseInt(error.message.match(/\d+/)[0]) 
+        : 5,
+      ip: req.clientInfo?.ip,
+      browser: req.clientInfo?.browser,
+      device: req.clientInfo?.device,
+      timestamp: new Date().toLocaleString(),
+      capturedImage,
+    });
+
+    await logAudit({
+      action: 'LOGIN_FAILURE',
+      entity: 'Admin',
+      req,
+      status: 'failure',
+      errorMessage: error.message,
+    });
+    throw error;
+  }
 });
 
 /**
@@ -87,9 +120,26 @@ const logout = asyncHandler(async (req, res) => {
 const unlock = asyncHandler(async (req, res) => {
   const { email, passkey } = req.body;
 
-  const result = await authService.unlock(email, passkey);
+  try {
+    const result = await authService.unlock(email, passkey);
 
-  return new ApiResponse(HTTP_STATUS.OK, result, result.message).send(res);
+    await logAudit({
+      action: 'ACCOUNT_UNLOCK_SUCCESS',
+      entity: 'Admin',
+      req,
+    });
+
+    return new ApiResponse(HTTP_STATUS.OK, result, result.message).send(res);
+  } catch (error) {
+    await logAudit({
+      action: 'ACCOUNT_UNLOCK_FAILURE',
+      entity: 'Admin',
+      req,
+      status: 'failure',
+      errorMessage: error.message,
+    });
+    throw error;
+  }
 });
 
 /**

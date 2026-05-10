@@ -16,6 +16,10 @@ const researchSchema = new mongoose.Schema(
       required: [true, 'Research title is required'],
       trim: true,
     },
+    researchName: {
+      type: String,
+      trim: true,
+    },
     authors: [
       {
         type: String,

@@ -46,6 +46,10 @@ const internshipSchema = new mongoose.Schema(
       required: [true, 'Description is required'],
       trim: true,
     },
+    responsibilities: {
+      type: String,
+      trim: true,
+    },
     technologiesUsed: [
       {
         type: String,

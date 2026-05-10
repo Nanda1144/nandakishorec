@@ -31,6 +31,20 @@ const headerSchema = new mongoose.Schema(
         url: { type: String, required: true },
       },
     ],
+    headerImages: [
+      { type: String, trim: true } // URLs
+    ],
+    socialLinks: [
+      {
+        platform: { type: String },
+        url: { type: String },
+        icon: { type: String }
+      }
+    ],
+    contactDetails: {
+      email: { type: String, trim: true, lowercase: true },
+      phone: { type: String, trim: true }
+    }
   },
   {
     timestamps: true,

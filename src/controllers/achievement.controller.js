@@ -11,8 +11,14 @@ const { HTTP_STATUS, MESSAGES } = require('../constants');
  */
 
 const getAllAchievements = asyncHandler(async (req, res) => {
-  const { page, limit, frontend, search } = req.query;
-  const result = await achievementService.getAllAchievements({ page, limit, frontend, search });
+  const { page, limit, frontend, search, all } = req.query;
+  const result = await achievementService.getAllAchievements({ 
+    page, 
+    limit, 
+    frontend, 
+    search,
+    all: all === 'true'
+  });
   return new ApiResponse(HTTP_STATUS.OK, result, MESSAGES.SUCCESS).send(res);
 });
 

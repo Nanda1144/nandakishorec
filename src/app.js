@@ -19,15 +19,30 @@ const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');
+const { clientInfo } = require('./middleware/security.middleware');
 
 // ─────────────────────────────────────────────────────────────────────────────
 const app = express();
 
 // ── Security ──────────────────────────────────────────────────────────────────
+app.use(clientInfo);          // Extract IP, Browser, Device info
 app.use(helmet());            // Set secure HTTP headers
 app.use(xss());               // Data sanitization against XSS
 app.use(mongoSanitize());     // Data sanitization against NoSQL query injection
 app.use(corsMiddleware);      // CORS with origin whitelist
+
+// ── CSRF Protection (Custom Header Check) ───────────────────────────────────
+app.use((req, res, next) => {
+  const method = req.method.toUpperCase();
+  const safeMethods = ['GET', 'HEAD', 'OPTIONS'];
+  if (!safeMethods.includes(method) && !req.headers['x-requested-with']) {
+    return res.status(403).json({
+      success: false,
+      message: 'CSRF security check failed: Missing X-Requested-With header.',
+    });
+  }
+  next();
+});
 
 // ── Performance ───────────────────────────────────────────────────────────────
 app.use(compression());       // Gzip responses
