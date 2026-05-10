@@ -10,9 +10,11 @@ const { HTTP_STATUS } = require('../constants');
  * Configure Multer for local storage.
  * In production, you might want to use Cloudinary or S3.
  */
+const os = require('os');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const tempDir = 'uploads/temp/';
+    const tempDir = path.join(os.tmpdir(), 'portfolio-uploads');
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }

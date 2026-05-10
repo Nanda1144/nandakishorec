@@ -38,6 +38,7 @@ class UploadService {
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
       }
+      console.error('❌ Cloudinary Upload Error Detail:', error);
       throw new ApiError(HTTP_STATUS.INTERNAL_SERVER_ERROR, `Cloudinary Upload Error: ${error.message}`);
     }
   }
